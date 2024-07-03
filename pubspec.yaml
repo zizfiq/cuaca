@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   http: ^1.2.1
   flutter_html: ^2.2.1
+  lottie: ^3.1.2
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +67,7 @@ flutter:
     - images/profile3.jpg
     - images/profile4.jpg
     - images/weather.png
+    - images/partly_cloudy_day.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

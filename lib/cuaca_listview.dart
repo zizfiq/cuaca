@@ -14,7 +14,7 @@ class CuacaListView extends StatefulWidget {
 }
 
 class CuacaListViewState extends State<CuacaListView> {
-  static const String URL = 'http://192.168.162.205/cuaca';
+  static const String URL = 'http://192.168.37.205/cuaca';
   late Future<List<Cuaca>> result_data;
 
   @override

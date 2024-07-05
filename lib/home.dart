@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const String WEATHER_URL = 'http://192.168.162.205/cuaca';
+  static const String WEATHER_URL = 'http://192.168.37.205/cuaca';
   static const String TIME_URL =
       'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Jakarta';
 

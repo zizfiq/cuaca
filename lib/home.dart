@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:cuaca/about.dart';
-import 'package:cuaca/crud_cuaca.dart';
+import 'package:cuaca/login.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'cuaca.dart';
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AdminManagementPage(),
+                    builder: (context) => LoginPage(),
                   ),
                 );
               },

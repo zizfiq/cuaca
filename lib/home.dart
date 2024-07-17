@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:cuaca/about.dart';
+import 'package:cuaca/crud_cuaca.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'cuaca.dart';
 import 'time_data.dart';
-import 'cuaca_listview.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const String WEATHER_URL = 'http://192.168.37.205/cuaca';
+  static const String WEATHER_URL = 'http://192.168.209.205/cuaca';
   static const String TIME_URL =
       'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Jakarta';
 
@@ -144,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const CuacaListView(),
+                    builder: (context) => AdminManagementPage(),
                   ),
                 );
               },

@@ -1,7 +1,7 @@
+import 'package:cuaca/crud_cuaca.dart';
 import 'package:cuaca/splash.dart';
 import 'package:flutter/material.dart';
-// import 'cuaca_listview.dart';
-// import 'home.dart';
+import 'home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: false,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SplashScreen(),
+      home: HomeScreen(),
       debugShowCheckedModeBanner: false,
     );
   }

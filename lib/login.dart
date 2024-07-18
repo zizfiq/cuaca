@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     final response = await http.get(
-      Uri.parse('http://192.168.209.205/cuaca/api/read_user.php'),
+      Uri.parse('http://192.168.39.205/cuaca/api/read_user.php'),
     );
 
     if (response.statusCode == 200) {

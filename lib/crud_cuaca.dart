@@ -10,13 +10,13 @@ class AdminManagementPage extends StatefulWidget {
 class _AdminManagementPageState extends State<AdminManagementPage> {
   // URL API untuk operasi CRUD
   static const String URL_READ =
-      'http://192.168.209.205/cuaca/api/read_cuaca.php';
+      'http://192.168.39.205/cuaca/api/read_cuaca.php';
   static const String URL_CREATE =
-      'http://192.168.209.205/cuaca/api/create_cuaca.php';
+      'http://192.168.39.205/cuaca/api/create_cuaca.php';
   static const String URL_UPDATE =
-      'http://192.168.209.205/cuaca/api/update_cuaca.php';
+      'http://192.168.39.205/cuaca/api/update_cuaca.php';
   static const String URL_DELETE_BASE =
-      'http://192.168.209.205/cuaca/api/delete_cuaca.php?id=';
+      'http://192.168.39.205/cuaca/api/delete_cuaca.php?id=';
 
   // List untuk menyimpan data cuaca
   List _cuacaList = [];
@@ -250,7 +250,10 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.edit),
+                        icon: const Icon(
+                          Icons.edit,
+                          color: Colors.green,
+                        ),
                         onPressed: () {
                           final Map<String, dynamic> cuacaData =
                               Map<String, dynamic>.from(_cuacaList[index]);
@@ -258,7 +261,7 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
                         },
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete),
+                        icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
                           _deleteCuaca(_cuacaList[index]['id'].toString());
                         },

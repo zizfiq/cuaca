@@ -14,7 +14,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static const String WEATHER_URL = 'http://192.168.209.205/cuaca';
+  static const String WEATHER_URL =
+      'http://192.168.39.205/cuaca/api/read_cuaca.php';
   static const String TIME_URL =
       'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Jakarta';
 
@@ -32,41 +33,78 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<Cuaca> fetchCuaca({String? city}) async {
-    var uri = Uri.parse('$WEATHER_URL/api/read_cuaca.php');
-    final response = await http.get(uri);
-    if (response.statusCode == 200) {
-      var jsonResponse = jsonDecode(response.body);
-      var cuacaList = jsonResponse['data'];
-
-      if (city != null) {
-        for (var item in cuacaList) {
-          if (item['kota'].toLowerCase() == city.toLowerCase()) {
-            return Cuaca.fromJson(item);
+    try {
+      final response = await http.get(Uri.parse(WEATHER_URL));
+      print('Fetch cuaca response status: ${response.statusCode}');
+      print('Fetch cuaca response body: ${response.body}');
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body)['data'];
+        if (city != null) {
+          for (var item in data) {
+            if (item['kota'].toLowerCase() == city.toLowerCase()) {
+              return Cuaca.fromJson(item);
+            }
           }
+          throw Exception('City not found');
+        } else {
+          return Cuaca.fromJson(data[0]);
         }
-        throw Exception('City not found');
       } else {
-        return Cuaca.fromJson(cuacaList[0]);
+        print('Failed to load cuaca');
+        throw Exception('Failed to load cuaca: ${response.body}');
       }
-    } else {
-      throw Exception('Failed to load weather data');
+    } catch (e) {
+      print('Error fetching cuaca: $e');
+      throw Exception('Error fetching cuaca: $e');
     }
   }
 
   Future<TimeData> fetchTimeData() async {
-    var uri = Uri.parse(TIME_URL);
-    final response = await http.get(uri);
-    if (response.statusCode == 200) {
-      var jsonResponse = jsonDecode(response.body);
-      return TimeData.fromJson(jsonResponse);
-    } else {
-      throw Exception('Failed to load time data');
+    try {
+      final response = await http.get(Uri.parse(TIME_URL));
+      print('Fetch time response status: ${response.statusCode}');
+      print('Fetch time response body: ${response.body}');
+      if (response.statusCode == 200) {
+        return TimeData.fromJson(json.decode(response.body));
+      } else {
+        print('Failed to load time data');
+        throw Exception('Failed to load time data: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching time data: $e');
+      throw Exception('Error fetching time data: $e');
     }
+  }
+
+  void _showCityNotFoundAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Kota Tidak Ditemukan'),
+          content: const Text(
+              'Maaf, data cuaca untuk kota yang Anda cari tidak ditemukan.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _searchCity(String city) {
     setState(() {
-      cuacaData = fetchCuaca(city: city);
+      cuacaData = fetchCuaca(city: city).catchError((error) {
+        if (error.toString().contains('City not found')) {
+          _showCityNotFoundAlert(context);
+        }
+        return fetchCuaca(); // Kembali ke data default jika terjadi kesalahan
+      });
     });
   }
 
@@ -90,8 +128,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: const InputDecoration(
                   hintText: 'Search',
                   border: InputBorder.none,
+                  hintStyle:
+                      TextStyle(color: Colors.white70), // Warna hint text
                 ),
                 style: const TextStyle(color: Colors.white),
+                cursorColor:
+                    Colors.white, // Mengubah warna kursor menjadi putih
                 onSubmitted: (query) {
                   _searchCity(query);
                   setState(() {
@@ -152,57 +194,68 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: FutureBuilder(
-        future: Future.wait([cuacaData, timeData]),
-        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData) {
-            return const Center(child: Text('No data available'));
-          } else {
-            Cuaca cuaca = snapshot.data![0] as Cuaca;
-            TimeData time = snapshot.data![1] as TimeData;
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    cuaca.kota,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("images/back.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: FutureBuilder(
+          future: Future.wait([cuacaData, timeData]),
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                  child: Text('Error: ${snapshot.error}',
+                      style: TextStyle(color: Colors.white)));
+            } else if (!snapshot.hasData) {
+              return const Center(
+                  child: Text('No data available',
+                      style: TextStyle(color: Colors.white)));
+            } else {
+              Cuaca cuaca = snapshot.data![0] as Cuaca;
+              TimeData time = snapshot.data![1] as TimeData;
+              return SafeArea(
+                child: ListView(
+                  padding: const EdgeInsets.all(16.0),
+                  children: <Widget>[
+                    Text(
+                      cuaca.kota,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${cuaca.suhu} °C',
-                    style: const TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(height: 8),
+                    Text(
+                      '${cuaca.suhu} °C',
+                      style: const TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
-                  ),
-                  Text(
-                    cuaca.status,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      color: Colors.grey,
+                    Text(
+                      cuaca.status,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        color: Colors.white70,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 32),
-                  Card(
-                    color: const Color(0xFFD3F1F9),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: <Widget>[
-                          Center(
-                            child: Image.network(
+                    const SizedBox(height: 32),
+                    Card(
+                      color: Colors.white.withOpacity(0.7),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          children: <Widget>[
+                            Image.network(
                               cuaca.statusImg,
                               width: 100,
                               height: 100,
@@ -227,40 +280,52 @@ class _HomeScreenState extends State<HomeScreen> {
                                     color: Colors.red, size: 50);
                               },
                             ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              _buildInfoItem('Humidity', '${cuaca.humidity}%'),
-                              _buildInfoItem(
-                                  'Wind Speed', '${cuaca.windSpeed} km/h'),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              _buildInfoItem('Longitude', '${cuaca.lon}'),
-                              _buildInfoItem('Latitude', '${cuaca.lat}'),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              _buildInfoItem('Local Time', time.time),
-                              _buildInfoItem('Local Date', time.date),
-                            ],
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                    child: _buildInfoItem(
+                                        'Humidity', '${cuaca.humidity}%')),
+                                Expanded(
+                                    child: _buildInfoItem('Wind Speed',
+                                        '${cuaca.windSpeed} km/h')),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                    child: _buildInfoItem(
+                                        'Longitude', '${cuaca.lon}')),
+                                Expanded(
+                                    child: _buildInfoItem(
+                                        'Latitude', '${cuaca.lat}')),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                    child: _buildInfoItem(
+                                        'Local Time', time.time)),
+                                Expanded(
+                                    child: _buildInfoItem(
+                                        'Local Date', time.date)),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          }
-        },
+                  ],
+                ),
+              );
+            }
+          },
+        ),
       ),
     );
   }

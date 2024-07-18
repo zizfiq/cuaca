@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({Key? key}) : super(key: key);
@@ -11,32 +12,56 @@ class _AboutScreenState extends State<AboutScreen> {
   int _currentIndex = 0;
 
   // Define profile data for each index
-  static const List<Map<String, String>> _profiles = [
+  static const List<Map<String, dynamic>> _profiles = [
     {
       'name': 'Fiqri Abdul Aziz',
       'status': 'Sibuk',
       'profileImage': 'images/profile.png',
-      'coverImage': 'images/cover.png'
+      'coverImage': 'images/cover.png',
+      'instagram': 'https://www.instagram.com/fiqri.aaziz',
+      'laptopImage': 'images/asus.png',
+      'politeknikImage': 'images/polbeng.png',
+      'email': 'fiqri@gmail.com',
+      'phone': '+628123456789'
     },
     {
       'name': 'Muhammad Siddiq',
       'status': 'Ada',
       'profileImage': 'images/profile2.jpg',
-      'coverImage': 'images/cover.png'
+      'coverImage': 'images/cover.png',
+      'instagram': 'https://www.instagram.com/muhammadsiddiq',
+      'laptopImage': 'images/acer.png',
+      'politeknikImage': 'images/polbeng.png',
+      'email': 'siddiq@gmail.com',
+      'phone': '+628987654321'
     },
     {
       'name': 'Nadya Kusuma Indah',
       'status': 'Ada',
       'profileImage': 'images/profile3.jpg',
-      'coverImage': 'images/cover.png'
+      'coverImage': 'images/cover.png',
+      'instagram': 'https://www.instagram.com/yayaki23_',
+      'laptopImage': 'images/lenovo.png',
+      'politeknikImage': 'images/polbeng.png',
+      'email': 'nadya@gmail.com',
+      'phone': '+6281122334455'
     },
     {
       'name': 'Nur Atikah',
       'status': 'Ada',
       'profileImage': 'images/profile4.jpg',
-      'coverImage': 'images/cover.png'
+      'coverImage': 'images/cover.png',
+      'instagram': 'https://www.instagram.com/atikahnrr_',
+      'laptopImage': 'images/asus.png',
+      'politeknikImage': 'images/polbeng.png',
+      'email': 'atikah@gmail.com',
+      'phone': '+6289988776655'
     },
   ];
+
+  void _launchURL(String url) async {
+    if (!await launch(url)) throw 'Could not launch $url';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +110,54 @@ class _AboutScreenState extends State<AboutScreen> {
                       fontSize: 24, fontWeight: FontWeight.bold),
                 ),
               ),
-              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      _profiles[_currentIndex]['laptopImage']!,
+                      width: 70,
+                      height: 70,
+                    ),
+                  ],
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Text(
-                  _profiles[_currentIndex]['status']!,
-                  style: const TextStyle(fontSize: 18),
+                  'Email: ${_profiles[_currentIndex]['email']}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: Text(
+                  'Phone: ${_profiles[_currentIndex]['phone']}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      _profiles[_currentIndex]['politeknikImage']!,
+                      width: 50,
+                      height: 50,
+                    ),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () =>
+                          _launchURL(_profiles[_currentIndex]['instagram']!),
+                      child: Image.asset(
+                        'images/instagram.png',
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

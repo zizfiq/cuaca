@@ -39,6 +39,7 @@ dependencies:
   lottie: ^3.1.2
   crypto: ^3.0.3
   flutter_launcher_icons: ^0.11.0
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +76,11 @@ flutter:
     - images/profile3.jpg
     - images/profile4.jpg
     - images/weather.png
+    - images/asus.png
+    - images/acer.png
+    - images/lenovo.png
+    - images/polbeng.png
+    - images/instagram.png
     - images/back.jpg
     - images/partly_cloudy_day.json
 

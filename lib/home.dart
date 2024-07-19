@@ -5,7 +5,6 @@ import 'package:cuaca/crud_cuaca.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'cuaca.dart';
-import 'time_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -18,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const String WEATHER_URL =
       'http://192.168.39.205/cuaca/api/read_cuaca.php';
   static const String TIME_URL =
-      'https://timeapi.io/api/Time/current/zone?timeZone=Asia/Jakarta';
+      'http://worldtimeapi.org/api/timezone/Asia/Jakarta';
 
   late Future<Cuaca> cuacaData;
   late Future<TimeData> timeData;
@@ -389,9 +388,9 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            _buildInfoItem('Local Time', time.time),
+            _buildInfoItem('Local Time', time.localTime),
             const SizedBox(height: 8),
-            _buildInfoItem('Local Date', time.date),
+            _buildInfoItem('Local Date', time.localDate),
           ],
         ),
       ),
@@ -418,6 +417,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class TimeData {
+  final String localTime;
+  final String localDate;
+
+  TimeData({required this.localTime, required this.localDate});
+
+  factory TimeData.fromJson(Map<String, dynamic> json) {
+    return TimeData(
+      localTime: json['datetime'].substring(11, 19),
+      localDate: json['datetime'].substring(0, 10),
     );
   }
 }

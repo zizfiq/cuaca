@@ -70,6 +70,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> _refreshData() async {
+    setState(() {
+      cuacaData = fetchCuaca();
+      timeData = fetchTimeData();
+    });
+  }
+
   void _showCityNotFoundAlert(BuildContext context) {
     showDialog(
       context: context,
@@ -241,49 +248,52 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: SafeArea(
-          child: ListView(
-            padding: const EdgeInsets.all(16.0),
-            children: <Widget>[
-              FutureBuilder<Cuaca>(
-                future: cuacaData,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(
-                        child: Text('Error: ${snapshot.error}',
-                            style: TextStyle(color: Colors.white)));
-                  } else if (!snapshot.hasData) {
-                    return const Center(
-                        child: Text('No weather data available',
-                            style: TextStyle(color: Colors.white)));
-                  } else {
-                    Cuaca cuaca = snapshot.data!;
-                    return _buildWeatherCard(cuaca);
-                  }
-                },
-              ),
-              const SizedBox(height: 16),
-              FutureBuilder<TimeData>(
-                future: timeData,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(
-                        child: Text('Error: ${snapshot.error}',
-                            style: TextStyle(color: Colors.white)));
-                  } else if (!snapshot.hasData) {
-                    return const Center(
-                        child: Text('No time data available',
-                            style: TextStyle(color: Colors.white)));
-                  } else {
-                    TimeData time = snapshot.data!;
-                    return _buildTimeCard(time);
-                  }
-                },
-              ),
-            ],
+          child: RefreshIndicator(
+            onRefresh: _refreshData,
+            child: ListView(
+              padding: const EdgeInsets.all(16.0),
+              children: <Widget>[
+                FutureBuilder<Cuaca>(
+                  future: cuacaData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: Text('Error: ${snapshot.error}',
+                              style: TextStyle(color: Colors.white)));
+                    } else if (!snapshot.hasData) {
+                      return const Center(
+                          child: Text('No weather data available',
+                              style: TextStyle(color: Colors.white)));
+                    } else {
+                      Cuaca cuaca = snapshot.data!;
+                      return _buildWeatherCard(cuaca);
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                FutureBuilder<TimeData>(
+                  future: timeData,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: Text('Error: ${snapshot.error}',
+                              style: TextStyle(color: Colors.white)));
+                    } else if (!snapshot.hasData) {
+                      return const Center(
+                          child: Text('No time data available',
+                              style: TextStyle(color: Colors.white)));
+                    } else {
+                      TimeData time = snapshot.data!;
+                      return _buildTimeCard(time);
+                    }
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -226,6 +226,10 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
     );
   }
 
+  Future<void> _refreshData() async {
+    await _fetchCuaca();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -258,47 +262,50 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
           ),
         ],
       ),
-      body: _filteredCuacaList.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _filteredCuacaList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Image.network(
-                    _filteredCuacaList[index]['status_img'],
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.error);
-                    },
-                  ),
-                  title: Text(_filteredCuacaList[index]['status']),
-                  subtitle: Text(_filteredCuacaList[index]['kota']),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.green),
-                        onPressed: () {
-                          final Map<String, dynamic> cuacaData =
-                              Map<String, dynamic>.from(
-                                  _filteredCuacaList[index]);
-                          _showCuacaDialog(cuaca: cuacaData);
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          final id = _filteredCuacaList[index]['id'];
-                          _deleteCuaca(id);
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: _filteredCuacaList.isEmpty
+            ? const Center(child: CircularProgressIndicator())
+            : ListView.builder(
+                itemCount: _filteredCuacaList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Image.network(
+                      _filteredCuacaList[index]['status_img'],
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(Icons.error);
+                      },
+                    ),
+                    title: Text(_filteredCuacaList[index]['status']),
+                    subtitle: Text(_filteredCuacaList[index]['kota']),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.green),
+                          onPressed: () {
+                            final Map<String, dynamic> cuacaData =
+                                Map<String, dynamic>.from(
+                                    _filteredCuacaList[index]);
+                            _showCuacaDialog(cuaca: cuacaData);
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            final id = _filteredCuacaList[index]['id'];
+                            _deleteCuaca(id);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCuacaDialog(),
         child: const Icon(Icons.add),

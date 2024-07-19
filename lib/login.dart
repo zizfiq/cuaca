@@ -1,4 +1,4 @@
-import 'package:cuaca/crud_cuaca.dart';
+// import 'package:cuaca/crud_cuaca.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -43,9 +43,8 @@ class _LoginPageState extends State<LoginPage> {
 
       if (user != null) {
         if (user['role'] == 'Admin') {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => AdminManagementPage()),
-          );
+          Navigator.of(context)
+              .pop(true); // Return true to indicate successful login
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Anda tidak memiliki akses admin')),
@@ -123,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                   ? CircularProgressIndicator()
                   : SizedBox(
                       width: double.infinity,
-                      height: 50, // Same height as the text fields
+                      height: 50,
                       child: ElevatedButton(
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
@@ -135,18 +134,6 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
               SizedBox(height: 20),
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.center,
-              //   children: [
-              //     Text('Does not have account?'),
-              //     TextButton(
-              //       onPressed: () {
-              //         // Implement sign up functionality here
-              //       },
-              //       child: Text('Sign in'),
-              //     ),
-              //   ],
-              // ),
             ],
           ),
         ),

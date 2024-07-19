@@ -8,7 +8,6 @@ class AdminManagementPage extends StatefulWidget {
 }
 
 class _AdminManagementPageState extends State<AdminManagementPage> {
-  // URL API untuk operasi CRUD
   static const String URL_READ =
       'http://192.168.39.205/cuaca/api/read_cuaca.php';
   static const String URL_CREATE =
@@ -18,109 +17,114 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
   static const String URL_DELETE_BASE =
       'http://192.168.39.205/cuaca/api/delete_cuaca.php?id=';
 
-  // List untuk menyimpan data cuaca
   List _cuacaList = [];
+  List _filteredCuacaList = [];
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Ambil data cuaca saat inisialisasi state
     _fetchCuaca();
+    _searchController.addListener(_onSearchChanged);
   }
 
-  // Fungsi untuk mengambil data cuaca dari server
+  @override
+  void dispose() {
+    _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> _fetchCuaca() async {
     try {
       final response = await http.get(Uri.parse(URL_READ));
-      print('Fetch cuaca response status: ${response.statusCode}');
-      print('Fetch cuaca response body: ${response.body}');
       if (response.statusCode == 200) {
         final data = json.decode(response.body)['data'];
-        print('Tipe data cuaca: ${data.runtimeType}');
-        print('Tipe data id: ${data[0]['id'].runtimeType}');
         setState(() {
           _cuacaList = data;
+          _filteredCuacaList = data;
         });
       } else {
-        print('Failed to load cuaca');
-        throw Exception('Failed to load cuaca: ${response.body}');
+        throw Exception('Failed to load cuaca');
       }
     } catch (e) {
-      print('Error fetching cuaca: $e');
       throw Exception('Error fetching cuaca: $e');
     }
   }
 
-  // Fungsi untuk membuat data cuaca baru di server
+  void _onSearchChanged() {
+    _filterCuacaList(_searchController.text);
+  }
+
+  void _filterCuacaList(String query) {
+    final filtered = _cuacaList.where((cuaca) {
+      final kota = cuaca['kota'].toLowerCase();
+      final input = query.toLowerCase();
+      return kota.contains(input);
+    }).toList();
+    setState(() {
+      _filteredCuacaList = filtered;
+    });
+  }
+
+  void _toggleSearch() {
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+        _filteredCuacaList = _cuacaList;
+      }
+    });
+  }
+
   Future<void> _createCuaca(Map<String, String> cuaca) async {
-    print('Attempting to create cuaca: $cuaca');
     var request = http.MultipartRequest('POST', Uri.parse(URL_CREATE));
     cuaca.forEach((key, value) {
       request.fields[key] = value;
     });
     try {
       var response = await request.send();
-      var responseBody = await response.stream.bytesToString();
-      print('Create cuaca response status: ${response.statusCode}');
-      print('Create cuaca response body: $responseBody');
       if (response.statusCode == 200) {
-        print('Cuaca created successfully');
         _fetchCuaca();
       } else {
-        print('Failed to create cuaca');
-        throw Exception('Failed to create cuaca: $responseBody');
+        throw Exception('Failed to create cuaca');
       }
     } catch (e) {
-      print('Error creating cuaca: $e');
       throw Exception('Error creating cuaca: $e');
     }
   }
 
-  // Fungsi untuk memperbarui data cuaca yang ada di server
   Future<void> _updateCuaca(Map<String, String> cuaca) async {
-    print('Attempting to update cuaca: $cuaca');
     var request = http.MultipartRequest('POST', Uri.parse(URL_UPDATE));
     cuaca.forEach((key, value) {
       request.fields[key] = value.toString();
     });
     try {
       var response = await request.send();
-      var responseBody = await response.stream.bytesToString();
-      print('Update cuaca response status: ${response.statusCode}');
-      print('Update cuaca response body: $responseBody');
       if (response.statusCode == 200) {
-        print('Cuaca updated successfully');
         _fetchCuaca();
       } else {
-        print('Failed to update cuaca');
-        throw Exception('Failed to update cuaca: $responseBody');
+        throw Exception('Failed to update cuaca');
       }
     } catch (e) {
-      print('Error updating cuaca: $e');
       throw Exception('Error updating cuaca: $e');
     }
   }
 
-  // Fungsi untuk menghapus data cuaca dari server
   Future<void> _deleteCuaca(String id) async {
     try {
       final response = await http.get(Uri.parse('$URL_DELETE_BASE$id'));
-      print('Delete cuaca response status: ${response.statusCode}');
-      print('Delete cuaca response body: ${response.body}');
       if (response.statusCode == 200) {
-        print('Cuaca deleted successfully');
         _fetchCuaca();
       } else {
-        print('Failed to delete cuaca');
-        throw Exception('Failed to delete cuaca: ${response.body}');
+        throw Exception('Failed to delete cuaca');
       }
     } catch (e) {
-      print('Error deleting cuaca: $e');
       throw Exception('Error deleting cuaca: $e');
     }
   }
 
-  // Fungsi untuk menampilkan dialog tambah atau edit cuaca
   void _showCuacaDialog({Map<String, dynamic>? cuaca}) {
     final TextEditingController idController =
         TextEditingController(text: cuaca?['id']?.toString() ?? '');
@@ -226,44 +230,68 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Cuaca'),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: 'Search',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.white70),
+                ),
+                style: const TextStyle(color: Colors.white),
+                cursorColor: Colors.white,
+                onSubmitted: (query) {
+                  _filterCuacaList(query);
+                  setState(() {
+                    _isSearching = false;
+                    _searchController.clear();
+                  });
+                },
+              )
+            : const Text('Kelola Cuaca'),
+        actions: [
+          IconButton(
+            icon: _isSearching
+                ? const Icon(Icons.close)
+                : const Icon(Icons.search),
+            onPressed: _toggleSearch,
+          ),
+        ],
       ),
-      body: _cuacaList.isEmpty
-          ? Center(child: CircularProgressIndicator())
+      body: _filteredCuacaList.isEmpty
+          ? const Center(child: CircularProgressIndicator())
           : ListView.builder(
-              itemCount: _cuacaList.length,
+              itemCount: _filteredCuacaList.length,
               itemBuilder: (context, index) {
                 return ListTile(
                   leading: Image.network(
-                    _cuacaList[index]['status_img'],
+                    _filteredCuacaList[index]['status_img'],
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      print('Error loading image: $error');
-                      return Icon(Icons.error);
+                      return const Icon(Icons.error);
                     },
                   ),
-                  title: Text(_cuacaList[index]['status']),
-                  subtitle: Text(_cuacaList[index]['kota']),
+                  title: Text(_filteredCuacaList[index]['status']),
+                  subtitle: Text(_filteredCuacaList[index]['kota']),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        icon: const Icon(
-                          Icons.edit,
-                          color: Colors.green,
-                        ),
+                        icon: const Icon(Icons.edit, color: Colors.green),
                         onPressed: () {
                           final Map<String, dynamic> cuacaData =
-                              Map<String, dynamic>.from(_cuacaList[index]);
+                              Map<String, dynamic>.from(
+                                  _filteredCuacaList[index]);
                           _showCuacaDialog(cuaca: cuacaData);
                         },
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          _deleteCuaca(_cuacaList[index]['id'].toString());
+                          final id = _filteredCuacaList[index]['id'];
+                          _deleteCuaca(id);
                         },
                       ),
                     ],
@@ -272,9 +300,7 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
               },
             ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showCuacaDialog();
-        },
+        onPressed: () => _showCuacaDialog(),
         child: const Icon(Icons.add),
       ),
     );

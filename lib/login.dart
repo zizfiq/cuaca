@@ -14,6 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
   bool _isLoading = false;
+  bool _isPasswordVisible = false; // Add this line
 
   Future<void> _login() async {
     setState(() {
@@ -107,8 +108,20 @@ class _LoginPageState extends State<LoginPage> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: !_isPasswordVisible, // Update this line
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Mohon masukkan password';

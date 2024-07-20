@@ -104,10 +104,25 @@ class _AboutScreenState extends State<AboutScreen> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(left: 16.0),
-                child: Text(
-                  _profiles[_currentIndex]['name']!,
-                  style: const TextStyle(
-                      fontSize: 24, fontWeight: FontWeight.bold),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _profiles[_currentIndex]['name']!,
+                      style: const TextStyle(
+                          fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(
+                        height:
+                            4), // Memberikan sedikit jarak antara nama dan status
+                    Text(
+                      _profiles[_currentIndex]['status']!,
+                      style: const TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                          color: Colors.grey),
+                    ),
+                  ],
                 ),
               ),
               Padding(

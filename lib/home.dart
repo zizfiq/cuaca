@@ -81,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final data = json.decode(response.body)['data'];
         if (city != null) {
           for (var item in data) {
-            if (item['kota'].toLowerCase() == city.toLowerCase()) {
+            if (item['kota'].toLowerCase().contains(city.toLowerCase())) {
               return Cuaca.fromJson(item);
             }
           }

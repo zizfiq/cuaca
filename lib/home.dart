@@ -31,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String _tempUnit = 'Celsius';
   String _windSpeedUnit = 'km/h';
 
+  String _username = '';
+
   _loadSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -54,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
     String? loginTimeString = prefs.getString('loginTime');
+    String username = prefs.getString('username') ?? '';
 
     if (isLoggedIn && loginTimeString != null) {
       DateTime loginTime = DateTime.parse(loginTimeString);
@@ -61,10 +64,12 @@ class _HomeScreenState extends State<HomeScreen> {
       if (now.difference(loginTime).inHours < 1) {
         setState(() {
           _isLoggedIn = true;
+          _username = username;
         });
       } else {
         await prefs.remove('isLoggedIn');
         await prefs.remove('loginTime');
+        await prefs.remove('username');
       }
     }
   }
@@ -290,8 +295,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     await prefs.setBool('isLoggedIn', true);
                     await prefs.setString(
                         'loginTime', DateTime.now().toIso8601String());
+                    String username = prefs.getString('username') ?? '';
                     setState(() {
                       _isLoggedIn = true;
+                      _username = username;
                     });
                   }
                 },
@@ -313,6 +320,19 @@ class _HomeScreenState extends State<HomeScreen> {
             child: ListView(
               padding: const EdgeInsets.all(16.0),
               children: <Widget>[
+                if (_isLoggedIn && _username.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: Text(
+                      'Hello, $_username',
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
                 FutureBuilder<Cuaca>(
                   future: cuacaData,
                   builder: (context, snapshot) {

@@ -15,7 +15,7 @@ class _AboutScreenState extends State<AboutScreen> {
   static const List<Map<String, dynamic>> _profiles = [
     {
       'name': 'Fiqri Abdul Aziz',
-      'status': 'Sibuk',
+      'status': 'Software Developer',
       'profileImage': 'images/profile.png',
       'coverImage': 'images/cover.png',
       'instagram': 'https://www.instagram.com/fiqri.aaziz',
@@ -26,7 +26,7 @@ class _AboutScreenState extends State<AboutScreen> {
     },
     {
       'name': 'Muhammad Siddiq',
-      'status': 'Ada',
+      'status': 'Project Manager',
       'profileImage': 'images/profile2.jpg',
       'coverImage': 'images/cover.png',
       'instagram': 'https://www.instagram.com/muhammadsiddiq',
@@ -37,7 +37,7 @@ class _AboutScreenState extends State<AboutScreen> {
     },
     {
       'name': 'Nadya Kusuma Indah',
-      'status': 'Ada',
+      'status': 'Team Leader',
       'profileImage': 'images/profile3.jpg',
       'coverImage': 'images/cover.png',
       'instagram': 'https://www.instagram.com/yayaki23_',
@@ -48,7 +48,7 @@ class _AboutScreenState extends State<AboutScreen> {
     },
     {
       'name': 'Nur Atikah',
-      'status': 'Ada',
+      'status': 'UI/UX Designer',
       'profileImage': 'images/profile4.jpg',
       'coverImage': 'images/cover.png',
       'instagram': 'https://www.instagram.com/atikahnrr_',

@@ -27,26 +27,23 @@ class _LoginPageState extends State<LoginPage> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       final users = data['data'] as List;
-
       final bytes = utf8.encode(_password);
       final digest = md5.convert(bytes);
       final hashedPassword = digest.toString();
-
       final user = users.firstWhere(
         (user) => user['email'] == _email && user['password'] == hashedPassword,
         orElse: () => null,
       );
-
       setState(() {
         _isLoading = false;
       });
-
       if (user != null) {
         if (user['role'] == 'Admin') {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           await prefs.setBool('isLoggedIn', true);
           await prefs.setString('loginTime', DateTime.now().toIso8601String());
-
+          await prefs.setString(
+              'username', user['username']); // Menyimpan username
           Navigator.of(context)
               .pop(true); // Return true to indicate successful login
         } else {

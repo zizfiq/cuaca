@@ -120,9 +120,17 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
 
   Future<void> _deleteCuaca(String id) async {
     try {
-      final response = await http.get(Uri.parse('$URL_DELETE_BASE$id'));
+      final response = await http.delete(Uri.parse('$URL_DELETE_BASE$id'));
       if (response.statusCode == 200) {
-        _fetchCuaca();
+        final responseData = json.decode(response.body);
+        if (responseData['message'] == 'Berhasil menghapus data cuaca!') {
+          _fetchCuaca();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(responseData['message'])),
+          );
+        } else {
+          throw Exception(responseData['message']);
+        }
       } else {
         throw Exception('Failed to delete cuaca');
       }
@@ -304,7 +312,8 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            final id = _filteredCuacaList[index]['id'];
+                            final id =
+                                _filteredCuacaList[index]['id'].toString();
                             _deleteCuaca(id).then((_) {
                               setState(() {
                                 _filteredCuacaList.removeAt(index);
@@ -315,8 +324,7 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
                       ],
                     ),
                   );
-                },
-              ),
+                }),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showCuacaDialog(),

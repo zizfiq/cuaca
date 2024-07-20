@@ -4,6 +4,7 @@ import 'package:cuaca/login.dart';
 import 'package:cuaca/crud_cuaca.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'cuaca.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,8 +30,28 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _checkLoginStatus();
     cuacaData = fetchCuaca();
     timeData = fetchTimeData();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
+    String? loginTimeString = prefs.getString('loginTime');
+
+    if (isLoggedIn && loginTimeString != null) {
+      DateTime loginTime = DateTime.parse(loginTimeString);
+      DateTime now = DateTime.now();
+      if (now.difference(loginTime).inHours < 1) {
+        setState(() {
+          _isLoggedIn = true;
+        });
+      } else {
+        await prefs.remove('isLoggedIn');
+        await prefs.remove('loginTime');
+      }
+    }
   }
 
   Future<Cuaca> fetchCuaca({String? city}) async {
@@ -173,8 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AdminManagementPage(),
-                    ),
+                        builder: (context) => AdminManagementPage()),
                   );
                 },
               ),
@@ -186,8 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AboutScreen(),
-                    ),
+                        builder: (context) => const AboutScreen()),
                   );
                 },
               ),
@@ -195,7 +214,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: const Icon(Icons.logout, color: Colors.blue),
                 title:
                     const Text('Logout', style: TextStyle(color: Colors.blue)),
-                onTap: () {
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  await prefs.remove('isLoggedIn');
+                  await prefs.remove('loginTime');
                   setState(() {
                     _isLoggedIn = false;
                   });
@@ -211,8 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AboutScreen(),
-                    ),
+                        builder: (context) => const AboutScreen()),
                   );
                 },
               ),
@@ -220,19 +242,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: const Icon(Icons.login, color: Colors.blue),
                 title:
                     const Text('Login', style: TextStyle(color: Colors.blue)),
-                onTap: () {
-                  Navigator.push(
+                onTap: () async {
+                  bool? isLoggedIn = await Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => LoginPage(),
-                    ),
-                  ).then((value) {
-                    if (value == true) {
-                      setState(() {
-                        _isLoggedIn = true;
-                      });
-                    }
-                  });
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                  if (isLoggedIn == true) {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setBool('isLoggedIn', true);
+                    await prefs.setString(
+                        'loginTime', DateTime.now().toIso8601String());
+                    setState(() {
+                      _isLoggedIn = true;
+                    });
+                  }
                 },
               ),
             ],

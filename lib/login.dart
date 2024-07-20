@@ -1,8 +1,8 @@
-// import 'package:cuaca/crud_cuaca.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -43,6 +43,10 @@ class _LoginPageState extends State<LoginPage> {
 
       if (user != null) {
         if (user['role'] == 'Admin') {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isLoggedIn', true);
+          await prefs.setString('loginTime', DateTime.now().toIso8601String());
+
           Navigator.of(context)
               .pop(true); // Return true to indicate successful login
         } else {

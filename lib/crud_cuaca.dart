@@ -49,7 +49,9 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
         throw Exception('Failed to load cuaca');
       }
     } catch (e) {
-      throw Exception('Error fetching cuaca: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching cuaca: $e')),
+      );
     }
   }
 
@@ -91,7 +93,9 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
         throw Exception('Failed to create cuaca');
       }
     } catch (e) {
-      throw Exception('Error creating cuaca: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error creating cuaca: $e')),
+      );
     }
   }
 
@@ -108,7 +112,9 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
         throw Exception('Failed to update cuaca');
       }
     } catch (e) {
-      throw Exception('Error updating cuaca: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error updating cuaca: $e')),
+      );
     }
   }
 
@@ -121,7 +127,9 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
         throw Exception('Failed to delete cuaca');
       }
     } catch (e) {
-      throw Exception('Error deleting cuaca: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting cuaca: $e')),
+      );
     }
   }
 
@@ -297,7 +305,11 @@ class _AdminManagementPageState extends State<AdminManagementPage> {
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
                             final id = _filteredCuacaList[index]['id'];
-                            _deleteCuaca(id);
+                            _deleteCuaca(id).then((_) {
+                              setState(() {
+                                _filteredCuacaList.removeAt(index);
+                              });
+                            });
                           },
                         ),
                       ],

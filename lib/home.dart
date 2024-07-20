@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'cuaca.dart';
+import 'settings.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,10 +28,24 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoggedIn = false;
   final TextEditingController _searchController = TextEditingController();
 
+  String _tempUnit = 'Celsius';
+  String _windSpeedUnit = 'km/h';
+
+  _loadSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _tempUnit = prefs.getString('tempUnit') ?? 'Celsius';
+      _windSpeedUnit = prefs.getString('windSpeedUnit') ?? 'km/h';
+    });
+    // Tambahkan ini untuk me-refresh data cuaca setelah mengubah pengaturan
+    _refreshData();
+  }
+
   @override
   void initState() {
     super.initState();
     _checkLoginStatus();
+    _loadSettings();
     cuacaData = fetchCuaca();
     timeData = fetchTimeData();
   }
@@ -199,6 +214,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.settings, color: Colors.blue),
+                title: const Text('Pengaturan',
+                    style: TextStyle(color: Colors.blue)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  ).then((_) => _loadSettings());
+                },
+              ),
+              ListTile(
                 leading: const Icon(Icons.info, color: Colors.blue),
                 title:
                     const Text('Tentang', style: TextStyle(color: Colors.blue)),
@@ -226,6 +252,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             ] else ...[
+              ListTile(
+                leading: const Icon(Icons.settings, color: Colors.blue),
+                title: const Text('Pengaturan',
+                    style: TextStyle(color: Colors.blue)),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsPage()),
+                  ).then((_) => _loadSettings());
+                },
+              ),
               ListTile(
                 leading: const Icon(Icons.info, color: Colors.blue),
                 title:
@@ -343,7 +380,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              '${cuaca.suhu} °C',
+              _tempUnit == 'Celsius'
+                  ? '${cuaca.suhu} °C'
+                  : '${(cuaca.suhu * 9 / 5 + 32).toStringAsFixed(1)} °F',
               style: const TextStyle(
                 fontSize: 48,
                 fontWeight: FontWeight.bold,
@@ -385,7 +424,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: _buildInfoItem('Humidity', '${cuaca.humidity}%')),
                 Expanded(
                     child: _buildInfoItem(
-                        'Wind Speed', '${cuaca.windSpeed} km/h')),
+                        'Wind Speed',
+                        _windSpeedUnit == 'km/h'
+                            ? '${cuaca.windSpeed} km/h'
+                            : '${(cuaca.windSpeed * 0.539957).toStringAsFixed(1)} knot')),
               ],
             ),
             const SizedBox(height: 8),

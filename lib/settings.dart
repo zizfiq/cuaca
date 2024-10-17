@@ -34,14 +34,14 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pengaturan'),
+        title: const Text('Pengaturan'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Satuan Suhu',
+            const Text('Satuan Suhu',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             DropdownButton<String>(
               value: _tempUnit,
@@ -60,8 +60,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 }
               },
             ),
-            SizedBox(height: 20),
-            Text('Satuan Kecepatan Angin',
+            const SizedBox(height: 20),
+            const Text('Satuan Kecepatan Angin',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             DropdownButton<String>(
               value: _windSpeedUnit,

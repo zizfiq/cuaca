@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _tempUnit = prefs.getString('tempUnit') ?? 'Celsius';
       _windSpeedUnit = prefs.getString('windSpeedUnit') ?? 'km/h';
     });
-    // Tambahkan ini untuk me-refresh data cuaca setelah mengubah pengaturan
     _refreshData();
   }
 
@@ -144,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if (error.toString().contains('City not found')) {
           _showCityNotFoundAlert(context);
         }
-        return fetchCuaca(); // Kembali ke data default jika terjadi kesalahan
+        return fetchCuaca(); //default
       });
     });
   }

@@ -11,7 +11,7 @@ class AboutScreen extends StatefulWidget {
 class _AboutScreenState extends State<AboutScreen> {
   int _currentIndex = 0;
 
-  // Define profile data for each index
+  // ini profil kelompok kami
   static const List<Map<String, dynamic>> _profiles = [
     {
       'name': 'Fiqri Abdul Aziz',
@@ -112,9 +112,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       style: const TextStyle(
                           fontSize: 24, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(
-                        height:
-                            4), // Memberikan sedikit jarak antara nama dan status
+                    const SizedBox(height: 4),
                     Text(
                       _profiles[_currentIndex]['status']!,
                       style: const TextStyle(

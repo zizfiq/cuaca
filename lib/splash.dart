@@ -39,10 +39,10 @@ class _SplashScreen extends State<SplashScreen> {
               height: 100.0,
               fit: BoxFit.fill,
             ),
-            SizedBox(
+            const SizedBox(
               height: 24.0,
             ),
-            Text(
+            const Text(
               "CUACA APP",
               style: TextStyle(
                 color: Colors.white,

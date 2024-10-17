@@ -44,8 +44,7 @@ class _LoginPageState extends State<LoginPage> {
           await prefs.setString('loginTime', DateTime.now().toIso8601String());
           await prefs.setString(
               'username', user['username']); // Menyimpan username
-          Navigator.of(context)
-              .pop(true); // Return true to indicate successful login
+          Navigator.of(context).pop(true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Anda tidak memiliki akses admin')),
@@ -79,15 +78,15 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text(
+              const Text(
                 'Cuaca App',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               SizedBox(
                 height: 50,
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     border: OutlineInputBorder(),
                   ),
@@ -100,13 +99,13 @@ class _LoginPageState extends State<LoginPage> {
                   onSaved: (value) => _email = value!,
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SizedBox(
                 height: 50,
                 child: TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _isPasswordVisible
@@ -120,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                   ),
-                  obscureText: !_isPasswordVisible, // Update this line
+                  obscureText: !_isPasswordVisible,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Mohon masukkan password';
@@ -130,9 +129,9 @@ class _LoginPageState extends State<LoginPage> {
                   onSaved: (value) => _password = value!,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : SizedBox(
                       width: double.infinity,
                       height: 50,
@@ -143,10 +142,10 @@ class _LoginPageState extends State<LoginPage> {
                             _login();
                           }
                         },
-                        child: Text('Login'),
+                        child: const Text('Login'),
                       ),
                     ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         ),

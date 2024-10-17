@@ -14,8 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   String _email = '';
   String _password = '';
   bool _isLoading = false;
-  bool _isPasswordVisible = false; // Add this line
-
+  bool _isPasswordVisible = false;
   Future<void> _login() async {
     setState(() {
       _isLoading = true;

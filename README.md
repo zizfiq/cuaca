@@ -1,16 +1,73 @@
-# cuaca
+# 🌦️ Aplikasi Cuaca Flutter + PHP Backend
 
-A new Flutter project.
+Aplikasi cuaca modern yang dibangun dengan Flutter dan mengambil data cuaca melalui API backend PHP. Ini merupakan proyek kecil untuk menyelesaikan matakulia Pemrograman Multiplatform
 
-## Getting Started
+## ✨ Fitur Utama
 
-This project is a starting point for a Flutter application.
+- 🕒 Informasi cuaca
+- 📍 Data cuaca berdasarkan lokasi
+- 🔍 Pencarian cuaca berdasarkan nama kota
+- 📊 Metrik cuaca detail (suhu, kelembaban, kecepatan angin, dll.)
+- 📱 Desain UI responsif dan modern
 
-A few resources to get you started if this is your first Flutter project:
+## 📸 Screenshot Aplikasi
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+| Fitur | Screenshot | Deskripsi |
+|-------|------------|-----------|
+| Halaman Utama | ![Home Screen](/images/home.png) | Menampilkan cuaca saat ini |
+| Pencarian Kota | ![Search Screen](/images/search.png) | Pencarian lokasi |
+| Pengaturan | ![Settings Screen](/images/settings.png) | Konfigurasi aplikasi dan preferensi pengguna |
+| Pengembang | ![Developer Screen](/images/about.png) | Halaman tentang pengembang |
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 🛠️ Tech Stack
+
+### Frontend (Mobile App)
+- 📱 Flutter SDK
+- 🎯 Bahasa pemrograman Dart
+- 📦 Provider state management
+- 🌐 Package HTTP untuk panggilan API
+
+### Backend
+- 🖥️ PHP 7.4+
+- 📊 Database MySQL 
+- 🔄 Arsitektur RESTful API Postman
+
+## 🚀 Instalasi
+
+1. Clone repository
+```bash
+git clone https://github.com/zizfiq/cuaca.git
+```
+
+2. Masuk ke direktori backend
+```bash
+cd cuaca
+```
+
+3. Install dependensi
+```bash
+flutter pub get
+```
+
+4. Jalankan aplikasi
+```bash
+flutter run
+```
+
+## 🛣️ Endpoint API
+
+- `GET /api/read_cuaca.php` - Mendapatkan cuaca saat ini
+- `GET /api/read_cuaca.php?id=20` - Mencari cuaca berdasarkan kota
+- `POST /api/update_cuaca.php` - Menyimpan informasi cuaca
+
+## 🤝 Kontribusi
+
+1. Fork repository
+2. Buat branch fitur Anda (`git checkout -b fitur/FiturKeren`)
+3. Commit perubahan Anda (`git commit -m 'Menambahkan FiturKeren'`)
+4. Push ke branch (`git push origin fitur/FiturKeren`)
+5. Buka Pull Request
+
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE](LICENSE) untuk detail

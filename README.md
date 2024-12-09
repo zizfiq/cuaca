@@ -14,10 +14,10 @@ Aplikasi cuaca modern yang dibangun dengan Flutter dan mengambil data cuaca mela
 
 | Fitur | Screenshot | Deskripsi |
 |-------|------------|-----------|
-| Halaman Utama | ![Home Screen](/images/home.png) | Menampilkan cuaca saat ini |
-| Pencarian Kota | ![Search Screen](/images/search.png) | Pencarian lokasi |
-| Pengaturan | ![Settings Screen](/images/settings.png) | Konfigurasi aplikasi dan preferensi pengguna |
-| Pengembang | ![Developer Screen](/images/about.png) | Halaman tentang pengembang |
+| Halaman Utama | ![Home Screen](/images/home.jpg) | Menampilkan cuaca saat ini |
+| Pencarian Kota | ![Search Screen](/images/search.jpg) | Pencarian lokasi |
+| Pengaturan | ![Settings Screen](/images/settings.jpg) | Konfigurasi aplikasi dan preferensi pengguna |
+| Pengembang | ![Developer Screen](/images/about.jpg) | Halaman tentang pengembang |
 
 ## 🛠️ Tech Stack
 
